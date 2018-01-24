@@ -52,11 +52,11 @@ if __name__ == '__main__':
     state_space = [(i, j) for i in range(3) for j in range(3)]
     action_space = [(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)]
     starting_state = (0, 0)
-    action = (1, 0)
+    action = (2, 0)
 
     def psa(state, action):
         position = (state[0] + action[0], state[1] + action[1])
-        if position in state_space:
+        if position in state_space and action in action_space:
             probabilities = [0] * len(state_space)
             probabilities[state_space.index(position)] = 1.
             return probabilities
