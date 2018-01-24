@@ -5,7 +5,7 @@ class mdp:
     """The class for a Markov Decision Process
 
     Attributes:
-        Step (None): Evolve the state for one step
+        step(None): Evolve the state for one step
 
     """
 
@@ -13,7 +13,7 @@ class mdp:
         """
         Args:
             :param gamma: reward factor:
-            :type gamma: int
+            :type gamma: float
             :param state_space: set of states:
             :type state_space: list of object
             :param state: current state
@@ -40,9 +40,10 @@ class mdp:
         self.reward = reward
 
     def step(self):
-        print(state_space)
-        new_state = state_space[int(np.random.choice(a=range(len(state_space)), size=1, p=self.psa(self.state, self.action)))]
-        print(new_state)
+        new_state = self.state_space[
+            int(np.random.choice(a=range(len(self.state_space)), size=1, p=self.psa(self.action)))]
+        self.state = new_state
+        print("The new state is", new_state)
 
 
 if __name__ == '__main__':
@@ -53,6 +54,7 @@ if __name__ == '__main__':
     action_space = [(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)]
     starting_state = (0, 0)
     action = (2, 0)
+
 
     def psa(state, action):
         position = (state[0] + action[0], state[1] + action[1])
