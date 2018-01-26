@@ -2,7 +2,7 @@
 Notes of maths, concepts, and algorithms in deep learning(computer vision and reinforcement learning)
 
 ## Prerequisites
-Git, numpy
+Python, git, numpy
 
 ## Install
 ```bash
