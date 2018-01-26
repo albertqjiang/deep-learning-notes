@@ -12,7 +12,7 @@ class ValueIteration:
         __policy(state): current policy for state
         make_policy(None): based on current value functions, generate corresponding policy
         play_game(None): play the game based on current policy
-
+        run_policy_iter_algo(iteration, delay): run the whole algorithm with set iterations and delay
     """
 
     def __init__(self, game):
@@ -61,8 +61,8 @@ class ValueIteration:
             state = self.game.state_space[i]
             current_reward = self.game.reward(state)
 
-            _, maxExpectation = self.max_expectation_action(state=state)
-            self.vs[i] = current_reward + self.game.gamma * maxExpectation
+            _, max_expectation = self.max_expectation_action(state=state)
+            self.vs[i] = current_reward + self.game.gamma * max_expectation
 
     def __policy(self, state=None):
         if state is None:

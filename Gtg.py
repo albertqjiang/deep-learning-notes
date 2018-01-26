@@ -14,7 +14,7 @@ class Gtg(Mdp):
         psa(list:float): deterministic transition probability function
         reward(float): reward function
         show(None): print current state
-        determinates(None): tell whether the game should be terminated
+        terminates(None): tell whether the game should be terminated
 
     """
 
