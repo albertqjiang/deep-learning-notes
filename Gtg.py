@@ -57,12 +57,17 @@ class Gtg(Mdp):
             for j in range(self.side):
                 row.append('+')
             matrix.append(row)
-        matrix[self.state[0]][self.state[1]] = '*'
-        matrix[self.goal[0]][self.goal[1]] = 'o'
+        if self.state != self.goal:
+            matrix[self.state[0]][self.state[1]] = '*'
+            matrix[self.goal[0]][self.goal[1]] = 'o'
+        else:
+            matrix[self.state[0]][self.state[1]] = 'x'
         print('\n'.join([''.join(['{:4}'.format(item) for item in row])
                          for row in matrix]))
 
-
+    def terminates(self):
+        if self.state == self.goal:
+            return True
 
 if __name__ == '__main__':
     game = Gtg(0.5, 9, (0, 0), action=(0, 1))

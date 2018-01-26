@@ -44,12 +44,16 @@ class Mdp:
             int(np.random.choice(a=range(len(self.state_space)), size=1, p=self.psa(self.state, self.action)))]
         self.state = new_state
         if verbose:
-            print("The new state is", new_state)
             self.show()
+        if self.terminates():
+            return "Game terminates"
+        return "Not terminated"
 
     def show(self):
         pass
 
+    def terminates(self):
+        pass
 
 if __name__ == '__main__':
     # A very simple example to try to get to the center of a 3 * 3 matrix starting from the upper left corner
