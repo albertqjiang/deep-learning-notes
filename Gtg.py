@@ -1,6 +1,7 @@
 import numpy as np
 from Mdp import Mdp
 
+
 class Gtg(Mdp):
     """The simple game of Getting To the Goal of a matrix by moving 1 step at a time
 
@@ -15,7 +16,7 @@ class Gtg(Mdp):
 
     """
 
-    def __init__(self, gamma, side, starting_state, action = None, goal=None):
+    def __init__(self, gamma, side, starting_state, action=None, goal=None):
         self.gamma = gamma
         self.side = side
         self.state_space = [(i, j) for i in range(self.side) for j in range(self.side)]
@@ -27,7 +28,7 @@ class Gtg(Mdp):
         self.starting_state = starting_state
         self.state = self.starting_state
         if goal is None:
-            self.goal = (int(side/2), int(side/2))
+            self.goal = (int(side / 2), int(side / 2))
 
     def psa(self, state=None, action=None):
         if state is None:
@@ -50,6 +51,6 @@ class Gtg(Mdp):
 
 
 if __name__ == '__main__':
-    game = Gtg(0.5, 9, (0, 0), action = (0, 1))
+    game = Gtg(0.5, 9, (0, 0), action=(0, 1))
     game.step()
     print(game.reward())

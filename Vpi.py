@@ -1,12 +1,14 @@
 from Gtg import Gtg
 import numpy as np
 
+
 class ValueIteration:
     """
     Attributes:
         iteration(): Iterate one time to update the value functions(asynchronous)
 
     """
+
     def __init__(self, game):
         """
         Args:
@@ -42,7 +44,7 @@ class ValueIteration:
 
 
 if __name__ == '__main__':
-    game = Gtg(0.5, 3, (0, 0), action = (0, 1))
+    game = Gtg(0.5, 3, (0, 0), action=(0, 1))
     vpi = ValueIteration(game)
     for _ in range(100):
         vpi.iteration()
