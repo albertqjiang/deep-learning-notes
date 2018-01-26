@@ -6,7 +6,12 @@ import time
 class ValueIteration:
     """
     Attributes:
-        iteration(): Iterate one time to update the value functions(asynchronous)
+        value(state): value function
+        max_expectation(state): the maximum expectation of future value functions and the action to reach that
+        iteration(None): iterate one time to update the value functions(asynchronous)
+        __policy(state): current policy for state
+        make_policy(None): based on current value functions, generate corresponding policy
+        play_game(None): play the game based on current policy
 
     """
 
@@ -59,7 +64,7 @@ class ValueIteration:
             _, maxExpectation = self.max_expectation_action(state=state)
             self.vs[i] = current_reward + self.game.gamma * maxExpectation
 
-    def policy(self, state=None):
+    def __policy(self, state=None):
         if state is None:
             state = self.game.state
         return self.ps[self.game.state_space.index(state)]
@@ -74,19 +79,26 @@ class ValueIteration:
 
     def play_game(self, delay=0):
         status = ""
+        steps = 0
         while status != "Game terminates":
-            self.game.action = self.policy()
+            steps += 1
+            self.game.action = self.__policy()
             status = self.game.step(verbose=True)
             print(status)
             time.sleep(delay)
+        return steps
+
+    def run_policy_iter_algo(self, iter=100, delay=0):
+        for _ in range(iter):
+            self.iteration()
+        vpi.make_policy()
+        steps = vpi.play_game(delay=delay)
+        print("Game takes {} steps to terminate".format(steps))
 
 
 
 if __name__ == '__main__':
     game = Gtg(0.5, 9, (0, 0), action=(0, 0))
     vpi = ValueIteration(game)
-    for _ in range(100):
-        vpi.iteration()
-    vpi.make_policy()
-    vpi.play_game(1)
+    vpi.run_policy_iter_algo()
 

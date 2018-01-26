@@ -7,6 +7,7 @@ class Mdp:
     Attributes:
         step(None): Evolve the state for one step
         show(None): Print current state
+        terminates(None): Tell whether the game should be terminated
     """
 
     def __init__(self, gamma, state_space, action_space, psa, reward, state=None, action=None, policy=None):
