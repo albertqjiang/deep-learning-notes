@@ -4,7 +4,7 @@ import numpy as np
 class ValueIteration:
     """
     Attributes:
-        iteration(): Iterate one time to update the value functions
+        iteration(): Iterate one time to update the value functions(asynchronous)
 
     """
     def __init__(self, game):
