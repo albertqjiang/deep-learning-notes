@@ -6,7 +6,7 @@ class Mdp:
 
     Attributes:
         step(None): Evolve the state for one step
-
+        show(None): Print current state
     """
 
     def __init__(self, gamma, state_space, action_space, psa, reward, state=None, action=None, policy=None):
@@ -39,11 +39,16 @@ class Mdp:
         self.policy = policy
         self.reward = reward
 
-    def step(self):
+    def step(self, verbose=False):
         new_state = self.state_space[
             int(np.random.choice(a=range(len(self.state_space)), size=1, p=self.psa(self.state, self.action)))]
         self.state = new_state
-        print("The new state is", new_state)
+        if verbose:
+            print("The new state is", new_state)
+            self.show()
+
+    def show(self):
+        pass
 
 
 if __name__ == '__main__':
@@ -73,4 +78,4 @@ if __name__ == '__main__':
 
     game = Mdp(gamma=gamma, state_space=state_space, action_space=action_space, psa=psa, reward=reward,
                state=starting_state, action=action)
-    game.step()
+    game.step(True)

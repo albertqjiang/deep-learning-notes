@@ -13,6 +13,7 @@ class Gtg(Mdp):
     Attributes:
         psa(list:float): deterministic transition probability function
         reward(float): reward function
+        show(None): print current state
 
     """
 
@@ -49,8 +50,21 @@ class Gtg(Mdp):
         distance_to_goal = np.sqrt((self.goal[0] - state[0]) ** 2 + (self.goal[0] - state[1]) ** 2)
         return 1 / (0.1 + distance_to_goal)
 
+    def show(self):
+        matrix = []
+        for i in range(self.side):
+            row = []
+            for j in range(self.side):
+                row.append('+')
+            matrix.append(row)
+        matrix[self.state[0]][self.state[1]] = '*'
+        matrix[self.goal[0]][self.goal[1]] = 'o'
+        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+                         for row in matrix]))
+
+
 
 if __name__ == '__main__':
     game = Gtg(0.5, 9, (0, 0), action=(0, 1))
-    game.step()
+    game.step(True)
     print(game.reward())

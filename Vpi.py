@@ -49,3 +49,6 @@ if __name__ == '__main__':
     for _ in range(100):
         vpi.iteration()
         print(vpi.vs)
+    game.step(True)
+
+
