@@ -29,8 +29,9 @@ class ValueIteration:
 
             max_future_expect = -9999.
             for a in self.game.action_space:
-                ps = self.game.psa(state, a)
-                if ps is None:
+                try:
+                    ps = self.game.psa(state, a)
+                except IndexError:
                     continue
                 else:
                     ps = np.array(ps)
@@ -43,5 +44,6 @@ class ValueIteration:
 if __name__ == '__main__':
     game = Gtg(0.5, 3, (0, 0), action = (0, 1))
     vpi = ValueIteration(game)
-    vpi.iteration()
-    print(vpi.vs)
+    for _ in range(100):
+        vpi.iteration()
+        print(vpi.vs)

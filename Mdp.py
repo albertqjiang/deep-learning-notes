@@ -63,8 +63,7 @@ if __name__ == '__main__':
             probabilities[state_space.index(position)] = 1.
             return probabilities
         else:
-            # Invalid action
-            return None
+            raise IndexError('Action not valid')
 
 
     def reward(state):

@@ -40,7 +40,7 @@ class Gtg(Mdp):
             probabilities[self.state_space.index(position)] = 1.
             return probabilities
         else:
-            return None
+            raise IndexError('Action not valid')
 
     def reward(self, state=None):
         if state is None:
