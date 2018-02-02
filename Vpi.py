@@ -98,7 +98,7 @@ class ValueIteration:
 
 
 if __name__ == '__main__':
-    game = Gtg(0.5, 9, (0, 0), action=(0, 0))
+    game = Gtg(0.5, 15, (0, 0), action=(0, 0))
     vpi = ValueIteration(game)
-    vpi.run_policy_iter_algo(delay=1)
+    vpi.run_policy_iter_algo(delay=0.8)
 
