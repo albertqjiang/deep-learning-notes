@@ -3,6 +3,7 @@ Notes of maths, concepts, and algorithms in deep learning(computer vision and re
 
 ## Prerequisites
 Python, git, numpy
+[MXNet install](https://mxnet.incubator.apache.org/install/index.html)
 
 ## Install
 ```bash
