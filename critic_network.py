@@ -10,6 +10,7 @@ class CriticNetwork:
     def __init__(self, output_dim, ctx=mx.cpu()):
         """
 
+        :type output_dim: int
         :type ctx: mx.Context
         """
         self.ctx = ctx
