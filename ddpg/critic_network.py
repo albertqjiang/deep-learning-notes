@@ -17,6 +17,7 @@ class CriticNetwork:
         self.output_dim = output_dim
         self.net = self.get_net()
 
+    # Test architecture
     def get_net(self):
         net = nn.Sequential()
         with net.name_scope():
