@@ -1,10 +1,51 @@
-from actor_network import *
-from critic_network import *
+from mxnet import nd
+from mxnet.gluon import nn
+import mxnet as mx
+import gym
+import numpy as np
+
+from actor_network import ActorNetwork, TargetNetMu
+from critic_network import CriticNetwork, TargetNetQ
 from replay_buffer import Memory
 
-M = 1000 # outer loop iteration
+np.random.seed(1)
+mx.random.seed(1)
+
+M = 70  # outer loop iteration
+T = 400  # inner loop iteration
+tau = 0.01  # update lagging coefficient
+gamma = 0.99  # discount factor
+
+ENV_NAME = 'Pendulum-v0'
+
 
 if __name__ == "__main__":
+
+    env = gym.make(ENV_NAME)
+    env.seed(1)
+    env = env.unwrapped
+
+    # Get state and action dimension
+    state_dim = env.observation_space.shape[0]
+    action_dim = env.action_space.shape[0]
+
+    # Initialize actor, critic and target networks
+    actor = ActorNetwork(action_dim)
+    critic = CriticNetwork()
+    target_a = TargetNetMu(actor)
+    target_mu = TargetNetQ(critic)
+
+
+
+
+
+
+
+
+
+
+
+
     # Initialize the actor, critic and two target networks
     actor = ActorNetwork(1)
     critic = CriticNetwork(1)

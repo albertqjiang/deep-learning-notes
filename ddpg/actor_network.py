@@ -7,14 +7,14 @@ import copy
 
 
 class ActorNetwork:
-    def __init__(self, output_dim, ctx=mx.cpu()):
+    def __init__(self, action_dim, ctx=mx.cpu()):
         """
 
-        :type output_dim: int
+        :type action_dim: int
         :type ctx: mx.Context
         """
         self.ctx = ctx
-        self.output_dim = output_dim
+        self.output_dim = action_dim
         self.net = self.get_net()
 
     # Test architecture
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     np.random.seed(0)
     mx.random.seed(0)
 
-    act_net = ActorNetwork(output_dim=10)
+    act_net = ActorNetwork(action_dim=10)
     tar_net = TargetNetMu(act_net)
     print(act_net.net(nd.array([1])))
     print(tar_net.net(nd.array([1])))
