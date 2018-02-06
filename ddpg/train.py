@@ -52,13 +52,17 @@ if __name__ == "__main__":
 
         # Receive initial observation
         s = env.reset()
-        explore_variance = 3  # initial exploration variance
+        explore_variance = 2  # initial exploration variance
 
         s = nd.array(s).reshape((1, -1))
         # Inner iteration
         for j in range(T):
-            action = actor.net(s)
 
+            # Generate action from action net and add exploring variation
+            action = actor.net(s)
+            action = action[0].asscalar()
+            action = nd.clip(nd.random.normal(action, explore_variance), -2, 2)
+            # print(action)
 
 
 
