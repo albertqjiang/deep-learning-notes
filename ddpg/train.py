@@ -1,6 +1,7 @@
 from mxnet import nd
 from mxnet.gluon import nn
 import mxnet as mx
+from mxnet import autograd
 import gym
 import numpy as np
 
@@ -16,7 +17,7 @@ T = 400  # inner loop iteration
 tau = 0.01  # update lagging coefficient
 gamma = 0.99  # discount factor
 buffer_size = 5000  # buffer capacity
-
+batch_size = 2
 
 ENV_NAME = 'Pendulum-v0'
 
@@ -37,13 +38,6 @@ if __name__ == "__main__":
     target_mu = TargetNetMu(actor)
     target_q = TargetNetQ(critic)
 
-    # Testing network initializations
-    # test_array = nd.array([1.])
-    # assert actor.net(test_array)[0][0] == -1.2251712
-    # assert target_mu.net(test_array)[0][0] == -1.2251712
-    # assert critic.net(test_array)[0][0] == -0.9443339
-    # assert target_q.net(test_array)[0][0] == -0.9443339
-
     # Initialize buffer
     memory = Memory(capacity=buffer_size, dims=2*state_dim + action_dim + 1)
 
@@ -54,8 +48,9 @@ if __name__ == "__main__":
         s = env.reset()
         explore_variance = 2  # initial exploration variance
 
-        s = nd.array(s).reshape((1, -1))[0]
+        s = nd.array(s).reshape((1, -1))
         # print(s)
+
         # Inner iteration
         for j in range(T):
 
@@ -68,22 +63,37 @@ if __name__ == "__main__":
             # Get info of next state
             s_, r, done, info = env.step(action)
 
-            memory.store_transition(s.asnumpy(), action, r, s_)
+            memory.store_transition(s[0].asnumpy(), action, r, s_)
+
             if memory.pointer > buffer_size:
 
                 # Decrease exploring area, 1. for 0 decreasing
                 explore_variance *= 1.
 
-                # Get target a from target_mu network
-                a_target = target_mu.net(nd.array(s_))
-                # Transform s(i+1) into handy ndarray
-                nded_s_ = nd.array([s_]).reshape((-1, 1))
-                # Combine the two ndarrays
-                combined_sa = nd.concatenate([nded_s_, a_target]).reshape((1, -1))
+                # Sample
+                batch = memory.sample(batch_size)
 
-                # print(combined_sa)
+                b_s = batch[:, :state_dim]
+                b_a = batch[:, state_dim:state_dim + action_dim]
+                b_r = batch[:, -state_dim - 1:-state_dim]
+                b_s_ = batch[:, -state_dim:]
+                b_s, b_a, b_r, b_s_ = nd.array(b_s), nd.array(b_a), nd.array(b_r), nd.array(b_s_)
+                # print("The batch is ")
+                # print(b_s, "\n", b_a, "\n", b_r, "\n", b_s_, "\n")
+
+                # Get a_target from target_mu network
+                a_target = target_mu.net(b_s_)
+
+                # print(b_s_, a_target)
+
+                # Combine the two ndarrays
+                combined_sa = nd.concatenate([b_s_, a_target], axis=1)
+
                 q_target = target_q.net(combined_sa)
-                print(q_target)
+
+                y = r + q_target * gamma
+                # print(y)
+
 
 
 
