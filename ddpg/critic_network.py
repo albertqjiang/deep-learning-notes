@@ -16,7 +16,8 @@ class CriticNetwork:
         self.net = self.get_net()
 
     # Test architecture
-    def get_net(self):
+    @staticmethod
+    def get_net():
         net = nn.Sequential()
         with net.name_scope():
             net.add(nn.Dense(1))

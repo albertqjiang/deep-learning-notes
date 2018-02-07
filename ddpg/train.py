@@ -54,7 +54,8 @@ if __name__ == "__main__":
         s = env.reset()
         explore_variance = 2  # initial exploration variance
 
-        s = nd.array(s).reshape((1, -1))
+        s = nd.array(s).reshape((1, -1))[0]
+        # print(s)
         # Inner iteration
         for j in range(T):
 
@@ -62,12 +63,27 @@ if __name__ == "__main__":
             action = actor.net(s)
             action = action[0].asscalar()
             action = nd.clip(nd.random.normal(action, explore_variance), -2, 2)
-            # print(action)
+            action = action.asnumpy()
 
+            # Get info of next state
+            s_, r, done, info = env.step(action)
 
+            memory.store_transition(s.asnumpy(), action, r, s_)
+            if memory.pointer > buffer_size:
 
+                # Decrease exploring area, 1. for 0 decreasing
+                explore_variance *= 1.
 
+                # Get target a from target_mu network
+                a_target = target_mu.net(nd.array(s_))
+                # Transform s(i+1) into handy ndarray
+                nded_s_ = nd.array([s_]).reshape((-1, 1))
+                # Combine the two ndarrays
+                combined_sa = nd.concatenate([nded_s_, a_target]).reshape((1, -1))
 
+                # print(combined_sa)
+                q_target = target_q.net(combined_sa)
+                print(q_target)
 
 
 
