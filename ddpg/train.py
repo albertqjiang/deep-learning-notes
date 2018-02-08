@@ -1,7 +1,7 @@
 from mxnet import nd
-from mxnet.gluon import nn
 import mxnet as mx
 from mxnet import autograd
+from mxnet import gluon
 import gym
 import numpy as np
 
@@ -17,7 +17,8 @@ T = 400  # inner loop iteration
 tau = 0.01  # update lagging coefficient
 gamma = 0.99  # discount factor
 buffer_size = 5000  # buffer capacity
-batch_size = 2
+batch_size = 32  # batch size
+lr = 0.01  # learning rate
 
 ENV_NAME = 'Pendulum-v0'
 
@@ -40,6 +41,14 @@ if __name__ == "__main__":
 
     # Initialize buffer
     memory = Memory(capacity=buffer_size, dims=2*state_dim + action_dim + 1)
+
+    # Total loss for critic
+    total_critic_loss = 0
+    total_transition_trained_on = 0
+
+
+
+
 
     # Outer iteration
     for i in range(M):
@@ -93,3 +102,33 @@ if __name__ == "__main__":
 
                 y = r + q_target * gamma
                 # print(y)
+
+                # Adam trainer by default
+                trainer = gluon.Trainer(critic.net.collect_params(), 'adam', {'learning_rate': 0.01})
+
+                # Define loss
+                square_loss = gluon.loss.L2Loss()
+
+                # Update the critic network
+                with autograd.record():
+                    output = critic.net(combined_sa)
+                    loss = square_loss(output, y)
+                loss.backward()
+                trainer.step(batch_size)
+
+
+
+
+
+
+
+
+
+                total_critic_loss += nd.sum(loss).asscalar()
+                total_transition_trained_on += batch_size
+
+
+
+
+        if total_transition_trained_on != 0:
+            print(total_critic_loss / total_transition_trained_on)
