@@ -18,7 +18,7 @@ tau = 0.01  # update lagging coefficient
 gamma = 0.99  # discount factor
 buffer_size = 5000  # buffer capacity
 batch_size = 32  # batch size
-lr = 0.01  # learning rate
+lr = 0.0001  # learning rate
 
 ENV_NAME = 'Pendulum-v0'
 
@@ -96,26 +96,36 @@ if __name__ == "__main__":
                 # print(b_s_, a_target)
 
                 # Combine the two ndarrays
-                combined_sa = nd.concatenate([b_s_, a_target], axis=1)
+                combined_s_a_target = nd.concatenate([b_s_, a_target], axis=1)
 
-                q_target = target_q.net(combined_sa)
+                q_target = target_q.net(combined_s_a_target)
 
                 y = r + q_target * gamma
                 # print(y)
 
+                # Update the critic network and calculate policy gradient
                 # Adam trainer by default
-                trainer = gluon.Trainer(critic.net.collect_params(), 'adam', {'learning_rate': 0.01})
+                trainer = gluon.Trainer(critic.net.collect_params(), 'adam', {'learning_rate': lr})
 
                 # Define loss
                 square_loss = gluon.loss.L2Loss()
 
-                # Update the critic network
                 with autograd.record():
-                    output = critic.net(combined_sa)
-                    loss = square_loss(output, y)
+                    combined_sa = nd.concatenate([b_s, b_a], axis=1)
+                    critic_output = critic.net(combined_sa)
+                    loss = square_loss(critic_output, y)
+
                 loss.backward()
                 trainer.step(batch_size)
 
+                with autograd.record():
+                    combined_sa.attach_grad()
+                    critic_output = critic.net(combined_sa)
+
+                # Take the gradient of q with respect to a
+                critic_output.backward()
+                a_grad = combined_sa.grad[:, state_dim:]
+                # print(a_grad)
 
 
 

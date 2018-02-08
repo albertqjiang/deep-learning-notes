@@ -20,6 +20,8 @@ class CriticNetwork:
     def get_net():
         net = nn.Sequential()
         with net.name_scope():
+            net.add(nn.Dense(3))
+            net.add(nn.Dense(3))
             net.add(nn.Dense(1))
         net.initialize(init=mx.init.Xavier())
         return net
