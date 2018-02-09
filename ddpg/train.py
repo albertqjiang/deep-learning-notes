@@ -46,10 +46,6 @@ if __name__ == "__main__":
     total_critic_loss = 0
     total_transition_trained_on = 0
 
-
-
-
-
     # Outer iteration
     for i in range(M):
 
@@ -104,10 +100,10 @@ if __name__ == "__main__":
                 # print(y)
 
                 # Update the critic network and calculate policy gradient
-                # Adam trainer by default
-                trainer = gluon.Trainer(critic.net.collect_params(), 'adam', {'learning_rate': lr})
+                # Adam critic_trainer by default
+                critic_trainer = gluon.Trainer(critic.net.collect_params(), 'adam', {'learning_rate': lr})
 
-                # Define loss
+                # Define critic loss
                 square_loss = gluon.loss.L2Loss()
 
                 with autograd.record():
@@ -116,16 +112,51 @@ if __name__ == "__main__":
                     loss = square_loss(critic_output, y)
 
                 loss.backward()
-                trainer.step(batch_size)
+                critic_trainer.step(batch_size)
 
-                with autograd.record():
+                # Calculate policy gradient
+
+                params_grads = []
+                a_grads = []
+
+                for state_i in b_s:
+                    state_i = state_i.reshape((1, -1))
+                    with autograd.record():
+                        a_predict = actor.net(state_i)
+                    # 1. Calculate gradient of the critic function w.r.t. the predicted action
+                    combined_sa = nd.concatenate([state_i, a_predict], axis=1)
+
+                    # 2. Calculate gradient of the action function w.r.t. its parameters
+                    a_predict.backward()
+
+                    params = actor.net.collect_params()
+                    if isinstance(params, (dict, gluon.ParameterDict)):
+                        params = list(params.values())
+
+                    params_grads.append([param.data().grad for param in params])
+
+                    # 1. Back to 1
                     combined_sa.attach_grad()
-                    critic_output = critic.net(combined_sa)
 
-                # Take the gradient of q with respect to a
-                critic_output.backward()
-                a_grad = combined_sa.grad[:, state_dim:]
-                # print(a_grad)
+                    with autograd.record():
+                        critic_output = critic.net(combined_sa)
+
+                    # Take the gradient of q with respect to a
+                    critic_output.backward()
+
+                    a_grad = combined_sa.grad[:, state_dim:]
+                    a_grads.append(a_grad)
+
+                # print(len(a_grads))
+                # print(len(params_grads))
+                # print(a_grads[0], "\n", params_grads[0])
+                # break
+
+
+
+
+
+
 
 
 
@@ -140,5 +171,5 @@ if __name__ == "__main__":
 
 
 
-        if total_transition_trained_on != 0:
-            print(total_critic_loss / total_transition_trained_on)
+        # if total_transition_trained_on != 0:
+        #     print(total_critic_loss / total_transition_trained_on)
