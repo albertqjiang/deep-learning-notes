@@ -47,7 +47,7 @@ if __name__ == "__main__":
     total_transition_trained_on = 0
 
     # Outer iteration
-    for i in range(M):
+    for m in range(M):
 
         # Receive initial observation
         s = env.reset()
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         # print(s)
 
         # Inner iteration
-        for j in range(T):
+        for t in range(T):
 
             # Generate action from action net and add exploring variation
             action = actor.net(s)
@@ -146,6 +146,12 @@ if __name__ == "__main__":
 
                     a_grad = combined_sa.grad[:, state_dim:]
                     a_grads.append(a_grad)
+
+                for i in range(batch_size):
+                    print(params_grads[i], a_grads[i])
+
+                    # Todo: multiply params and action gradients together to get policy gradients
+
 
                 # print(len(a_grads))
                 # print(len(params_grads))
