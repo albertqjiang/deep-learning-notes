@@ -2,8 +2,11 @@ from mxnet import nd
 import mxnet as mx
 from mxnet import autograd
 from mxnet import gluon
+
 import gym
+
 import numpy as np
+import time
 
 from actor_network import ActorNetwork, TargetNetMu
 from critic_network import CriticNetwork, TargetNetQ
@@ -56,6 +59,7 @@ if __name__ == "__main__":
         s = nd.array(s).reshape((1, -1))
         # print(s)
 
+        inner_time = time.time()
         # Inner iteration
         for t in range(T):
 
@@ -147,11 +151,27 @@ if __name__ == "__main__":
                     a_grad = combined_sa.grad[:, state_dim:]
                     a_grads.append(a_grad)
 
-                for i in range(batch_size):
-                    print(params_grads[i], a_grads[i])
+                policy_gradients = []
 
+                for i in range(batch_size):
+                    policy_gradient = [a_grads[i]*grad for grad in params_grads[i]]
+                    policy_gradients.append(policy_gradient)
                     # Todo: multiply params and action gradients together to get policy gradients
 
+                policy_grad_ave = []
+                for grad in policy_gradients:
+                    if len(policy_grad_ave) == 0:
+                        policy_grad_ave = grad
+                    else:
+                        # print("Original gradient is")
+                        # print(policy_grad_ave)
+                        # print("Added gradient is")
+                        # print(grad)
+                        for grad_layer, added_grad_layer in zip(policy_grad_ave, grad):
+                            grad_layer += added_grad_layer
+                    # print(policy_grad_ave)
+                policy_grad_ave = [item/batch_size for item in policy_grad_ave]
+                # print(policy_grad_ave)
 
                 # print(len(a_grads))
                 # print(len(params_grads))
@@ -163,18 +183,10 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-
-
                 total_critic_loss += nd.sum(loss).asscalar()
                 total_transition_trained_on += batch_size
 
-
+        print(time.time() - inner_time)
 
 
         # if total_transition_trained_on != 0:
