@@ -134,6 +134,8 @@ if __name__ == "__main__":
                     a_predict.backward()
 
                     params = actor.net.collect_params()
+                    param_values = params.values()
+                    param_keys = params.keys()
                     if isinstance(params, (dict, gluon.ParameterDict)):
                         params = list(params.values())
 
@@ -173,15 +175,7 @@ if __name__ == "__main__":
                 policy_grad_ave = [item/batch_size for item in policy_grad_ave]
                 # print(policy_grad_ave)
 
-                # print(len(a_grads))
-                # print(len(params_grads))
-                # print(a_grads[0], "\n", params_grads[0])
-                # break
-
-
-
-
-
+                actor_params_dict = actor.net.collect_params()
 
                 total_critic_loss += nd.sum(loss).asscalar()
                 total_transition_trained_on += batch_size

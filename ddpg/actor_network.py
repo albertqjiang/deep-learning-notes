@@ -41,5 +41,5 @@ if __name__ == "__main__":
     tar_net = TargetNetMu(act_net)
     print(act_net.net(nd.array([1])))
     print(tar_net.net(nd.array([1])))
-    print(act_net.net is tar_net.net)
+    print(type(act_net.net.collect_params()))
 
